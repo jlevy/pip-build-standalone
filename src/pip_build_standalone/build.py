@@ -8,6 +8,7 @@ from prettyfmt import fmt_path
 
 from pip_build_standalone.cli_utils import info, run, success, warn
 from pip_build_standalone.search_replace_files import search_replace_in_files
+from pip_build_standalone.shebangs import RELOCATABLE_PYTHON3_SHEBANG, replace_shebangs
 
 
 def build_python_env(
@@ -63,11 +64,15 @@ def build_python_env(
         ]
     )
 
+    # Don't (initially) include pycache files to keep the build smaller.
     clean_pycache_dirs(target_absolute)
 
     # First handle binaries with possible absolute paths.
     if sys.platform == "darwin":
         update_macos_dylib_ids(install_root)
+
+    # Make all the scripts relocatable.
+    replace_shebangs([f"{install_root}/bin/*"], RELOCATABLE_PYTHON3_SHEBANG)
 
     # Then handle text files with absolute paths.
     replace_absolute_paths(install_root, str(target_absolute), str(target_dir))
