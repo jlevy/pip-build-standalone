@@ -6,7 +6,7 @@ from pathlib import Path
 
 from prettyfmt import fmt_path
 
-from pip_build_standalone.cli_utils import info, run, success, warn
+from pip_build_standalone.cli_utils import fail, info, run, success
 from pip_build_standalone.search_replace_files import search_replace_in_files
 from pip_build_standalone.shebangs import RELOCATABLE_PYTHON3_SHEBANG, replace_shebangs
 
@@ -117,7 +117,7 @@ def replace_absolute_paths(python_root: Path, old_path_str: str, new_path_str: s
     all_files_glob = [f"{python_root}/**/*"]
     matches = search_replace_in_files(all_files_glob, old_path_str.encode(), None)
     if matches:
-        warn(f"Found {matches} matches of `{old_path_str}` in binary files (see above)")
+        fail(f"Found {matches} matches of `{old_path_str}` in binary files (see above)")
     else:
         info("Great! No absolute paths found in the installed files.")
 
