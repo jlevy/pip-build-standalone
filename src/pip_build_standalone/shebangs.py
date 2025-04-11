@@ -79,6 +79,8 @@ def replace_shebangs(
     """
     total_replacements = 0
 
+    info()
+    info("Inserting relocatable shebangs on scripts in:\n" + "    ', '.join(glob_patterns)}")
     for glob_pattern in glob_patterns:
         for file_path in glob.glob(glob_pattern, recursive=True):
             path = Path(file_path)

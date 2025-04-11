@@ -109,13 +109,20 @@ def replace_absolute_paths(python_root: Path, old_path_str: str, new_path_str: s
     text_glob = [f"{python_root}/bin/*", f"{python_root}/lib/**/*.py"]
 
     info()
-    info(f"Replacing all absolute paths in: {text_glob}: `{old_path_str}` -> `{new_path_str}`")
-    search_replace_in_files(text_glob, old_path_str.encode(), new_path_str.encode())
+    info(
+        "Replacing all absolute paths in:\n"
+        f"    {' '.join(text_glob)}:\n"
+        f"    `{old_path_str}` -> `{new_path_str}`"
+    )
+    matches, _files_changed = search_replace_in_files(
+        text_glob, old_path_str.encode(), new_path_str.encode()
+    )
+    info(f"Replaced {matches} total occurrences in {len(_files_changed)} files total")
 
     info()
     info("Sanity checking if any absolute paths remain...")
     all_files_glob = [f"{python_root}/**/*"]
-    matches = search_replace_in_files(all_files_glob, old_path_str.encode(), None)
+    matches, _files_changed = search_replace_in_files(all_files_glob, old_path_str.encode(), None)
     if matches:
         fail(f"Found {matches} matches of `{old_path_str}` in binary files (see above)")
     else:

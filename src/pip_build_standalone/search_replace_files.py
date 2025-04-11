@@ -13,24 +13,27 @@ def search_replace_in_files(
     search_bytes: bytes,
     replace_bytes: bytes | None,
     backup_suffix: str | None = None,
-) -> int:
+) -> tuple[int, list[Path]]:
     """
     Search or replace occurrences of `search_bytes` with `replace_bytes` in all files
     matching the glob pattern.
     """
+    files_with_replacements: list[Path] = []
     total_replacements = 0
 
     for glob_pattern in glob_patterns:
         for file_path in glob.glob(glob_pattern, recursive=True):
-            if Path(file_path).is_file():
+            file_path = Path(file_path)
+            if file_path.is_file():
                 replacements = search_replace_in_file(
-                    Path(file_path), search_bytes, replace_bytes, backup_suffix
+                    file_path, search_bytes, replace_bytes, backup_suffix
                 )
                 if replacements > 0:
                     op = "Replaced" if replace_bytes else "Found"
                     info(f"{op} {replacements} occurrences in: {fmt_path(file_path)}")
                     total_replacements += replacements
-    return total_replacements
+                    files_with_replacements.append(file_path)
+    return total_replacements, files_with_replacements
 
 
 def search_replace_in_file(
