@@ -157,7 +157,7 @@ reportImplicitStringConcatenation = false
 
 [tool.pytest.ini_options]
 # For this tool, good to see the test output.
-capture = "no"
+addopts = "--capture=no"
 python_files = ["*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]

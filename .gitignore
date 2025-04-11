@@ -1,3 +1,6 @@
+renamed_root/
+py-standalone/
+
 # Additions to standard GitHub .gitignore:
 *.bak
 *.orig
@@ -5,6 +8,7 @@ tmp/
 trash/
 attic/
 .kash/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
