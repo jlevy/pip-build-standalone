@@ -1,16 +1,6 @@
 """
-pip-build-standalone builds a fully standalone, relocatable Python installation with the
+pip-build-standalone builds a standalone, relocatable Python installation with the
 given pips installed.
-
-Typically, Python installations are not relocatable or transferable between machines, in
-particular because scripts and libraries are tied to absolute file paths, such as your
-home folder at the time Python or the venv was installed.
-
-The Python installation created by pip-build-standalone has no absolute paths encoded in
-any of the Python scripts or libraries, so should be installable as a binary folder at
-any location on a machine with compatible architecture.
-
-Warning: Built initially for macOS and not yet tested on Windows and Linux!
 
 More info: https://github.com/jlevy/pip-build-standalone
 """
