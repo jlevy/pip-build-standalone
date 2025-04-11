@@ -20,7 +20,7 @@ jobs:
       matrix:
         # Update this as needed:
         # Common platforms: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        os: ["ubuntu-latest"]
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         python-version: ["3.13"]
 
     # Linux only by default. Use ${{ matrix.os }} for other OSes.
