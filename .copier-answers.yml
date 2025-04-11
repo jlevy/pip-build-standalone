@@ -1,0 +1,9 @@
+# Changes here will be overwritten by Copier. Do not edit manually.
+_commit: v0.2.5
+_src_path: gh:jlevy/simple-modern-uv
+package_author_email: joshua@cal.berkeley.edu
+package_author_name: Joshua Levy
+package_description: Use uv to build a pip within a standalone Python installation
+package_github_org: jlevy
+package_module: pip_build_standalone
+package_name: pip-build-standalone
