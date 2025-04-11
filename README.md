@@ -94,30 +94,28 @@ Great! No absolute paths found in the installed files.
 
 ✔️ Success: Created standalone Python environment for packages ['cowsay'] at: py-standalone
 
-$ ./py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay -t moo
-  ___
-| moo |
-  ===
-   \
-    \
-      ^__^
-      (oo)\_______
-      (__)\       )\/\
-          ||----w |
-          ||     ||
-
-$ mv ./py-standalone /tmp
-$ /tmp/py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay -t moo
-  ___
-| moo |
-  ===
-   \
-    \
-      ^__^
-      (oo)\_______
-      (__)\       )\/\
-          ||----w |
-          ||     ||
+$ ./py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay -t 'im moobile'
+  __________
+| im moobile |
+  ==========
+          \
+           \
+             ^__^
+             (oo)\_______
+             (__)\       )\/\
+                 ||----w |
+                 ||     ||
+$ /tmp/py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay -t 'udderly moobile'
+  _______________
+| udderly moobile |
+  ===============
+               \
+                \
+                  ^__^
+                  (oo)\_______
+                  (__)\       )\/\
+                      ||----w |
+                      ||     ||
 $
 ```
 

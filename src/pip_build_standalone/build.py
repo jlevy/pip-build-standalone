@@ -48,10 +48,6 @@ def build_python_env(
 
     install_root = Path(install_root_paths[0])  # Use the first match
 
-    pip_path = install_root / "bin" / "pip"
-    if not pip_path.exists():
-        raise FileNotFoundError(f"Failed to find pip at: {fmt_path(pip_path)}")
-
     run(
         [
             "uv",
