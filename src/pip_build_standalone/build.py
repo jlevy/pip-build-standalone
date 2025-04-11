@@ -79,8 +79,16 @@ def build_python_env(
 
 def update_macos_dylib_ids(python_root: Path):
     """
-    Update the dylib ids of all the dylibs in the given root directory.
+    macOS: Update the dylib ids of all the dylibs in the given root directory.
+    It seems uv patches them with absolute paths using `install_name_tool`, which means
+    they are tied to the user's install location.
+
+    So we reset this but use `@executable_path` to ensure the dylibs are relocatable.
+    See:
+    https://github.com/astral-sh/uv/blob/main/crates/uv-python/src/managed.rs#L545-L567
+    https://github.com/astral-sh/uv/blob/main/crates/uv-python/src/macos_dylib.rs
     """
+    # Should be something like: py-standalone/cpython-3.13.2-macos-aarch64-none/lib/libpython3.13.dylib
     glob_pattern = f"{python_root}/lib/**/*.dylib"
     for dylib_path in glob.glob(glob_pattern, recursive=True):
         info(f"Found macos dylib, will update its id to remove any absolute paths: {dylib_path}")
