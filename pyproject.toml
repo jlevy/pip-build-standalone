@@ -38,6 +38,11 @@ classifiers = [
 # ---- Main dependencies ----
 
 dependencies = [
+    "funlog>=0.2.1",
+    "prettyfmt>=0.3.0",
+    "rich>=14.0.0",
+    "rich-argparse>=1.7.0",
+    "strif>=2.1.0",
 ]
 
 
@@ -55,7 +60,7 @@ dev = [
 
 [project.scripts]
 # Add script entry points here.
-pip-build-standalone = "pip_build_standalone:main"
+pip-build-standalone = "pip_build_standalone.cli:main"
 
 
 # ---- Build system ----
@@ -141,10 +146,11 @@ reportUnusedCallResult = false
 # reportMissingImports = false
 # reportUnnecessaryIsInstance = false
 # reportUnreachable = false
-# reportAny = false
-# reportExplicitAny = false
+reportAny = false
+reportExplicitAny = false
 # reportUnknownVariableType = false
 # reportUnknownArgumentType = false
+reportImplicitStringConcatenation = false
 
 [tool.codespell]
 # ignore-words-list = "foo,bar"
