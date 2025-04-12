@@ -48,6 +48,25 @@ def build_python_env(
 
     install_root = Path(install_root_paths[0])  # Use the first match
 
+    # XXX There is currently no option to run `uv pip install --relocatable` but
+    # there is an option to do it with `uv venv --relocatable`.
+    # So let's get a config file that marks a venv as relocatable.
+    bare_venv_dir = target_dir / "bare-venv"
+    temp_pyvenv_cfg = install_root / "pyvenv.cfg"
+    run(
+        [
+            "uv",
+            "venv",
+            "--relocatable",
+            "--python",
+            str(install_root),
+            str(bare_venv_dir),
+        ]
+    )
+    os.rename(bare_venv_dir / "pyvenv.cfg", temp_pyvenv_cfg)
+    shutil.rmtree(bare_venv_dir)
+    info(f"Created relocatable venv config at: {fmt_path(temp_pyvenv_cfg)}")
+
     run(
         [
             "uv",
@@ -60,6 +79,10 @@ def build_python_env(
         ]
     )
 
+    # Now we don't need the temp pyvenv.cfg file anymore.
+    # It has absolute paths so better to just remove it.
+    os.remove(temp_pyvenv_cfg)
+
     # Don't (initially) include pycache files to keep the build smaller.
     clean_pycache_dirs(target_absolute)
 
@@ -68,10 +91,15 @@ def build_python_env(
         update_macos_dylib_ids(install_root)
 
     # Make all the scripts relocatable.
+    # This may not actually be necessary anymore since we've done the pyvenv.cfg hack
+    # above, but it's no harm to have it here too.
     replace_shebangs([f"{install_root}/bin/*"], RELOCATABLE_PYTHON3_SHEBANG)
 
     # Then handle text files with absolute paths.
     replace_absolute_paths(install_root, str(target_absolute), str(target_dir))
+
+    # Double check there are no absolute paths left.
+    sanity_check_absolute_paths(install_root, str(target_absolute))
 
     success(
         f"Created standalone Python environment for packages {package_list} at: {fmt_path(target_dir)}"
@@ -115,6 +143,8 @@ def replace_absolute_paths(python_root: Path, old_path_str: str, new_path_str: s
     )
     info(f"Replaced {matches} total occurrences in {len(_files_changed)} files total")
 
+
+def sanity_check_absolute_paths(python_root: Path, old_path_str: str):
     info()
     info("Sanity checking if any absolute paths remain...")
     all_files_glob = [f"{python_root}/**/*"]

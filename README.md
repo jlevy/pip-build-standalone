@@ -13,15 +13,23 @@ and offers [relocatable venvs](https://github.com/astral-sh/uv/pull/5515). But t
 actual Python installations created by uv can still have absolute paths that can leak
 into libs and scripts.
 
-This tool takes a bit more of a brute-force approach to get a fully self-contained
-installation. It uses a true (not venv) Python installation with the given pips
-installed, with zero absolute paths encoded in any of the Python scripts or libraries.
+This tool takes a bit of a brute-force approach to get a fully self-contained
+installation. We have to do slightly different things on macOS, Linux, and Windows to
+make the installation relocatable, but it now seems to work on all three platforms.
+
+It uses a true (not venv) Python installation with the given pips installed, with zero
+absolute paths encoded in any of the Python scripts or libraries.
 So *in theory*, the resulting binary folder should be installable as at any location on
 a machine with compatible architecture.
 
+The idea is this pre-built binary build for a given platform can now packaged for use
+without any external dependencies on Python or uv.
+
 Warning: Experimental!
 No promises this works or is even a good idea.
-So far only tested on macOS and Linux though I hope it will work on Windows too.
+
+It is lightly tested on macOS, ubuntu, and Windows, but obviously there are lots of
+possibilities for subtle incompatibilities within a given platform.
 
 ## Usage
 
@@ -36,8 +44,8 @@ package:
 uvx pip-build-standalone cowsay
 ```
 
-Now the `./py-standalone` directory should work on macOS without being tied to a
-specific machine, your home folder, or any other system-specific paths.
+Now the `./py-standalone` directory will work without being tied to a specific machine,
+your home folder, or any other system-specific paths.
 
 Binaries can now be put wherever and run:
 
