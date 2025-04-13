@@ -8,6 +8,7 @@ More info: https://github.com/jlevy/pip-build-standalone
 import argparse
 import shutil
 import subprocess
+from importlib.metadata import version
 from pathlib import Path
 from typing import Any
 
@@ -17,9 +18,18 @@ from rich_argparse.contrib import ParagraphRichHelpFormatter
 from pip_build_standalone.build import build_python_env
 from pip_build_standalone.cli_utils import fail
 
+APP_NAME = "pip-build-standalone"
+
 DEFAULT_PYTHON_VERSION = "3.13"
 
 DEFAULT_TARGET_DIR = "py-standalone"
+
+
+def get_app_version() -> str:
+    try:
+        return "v" + version(APP_NAME)
+    except Exception:
+        return "unknown"
 
 
 def main() -> int:
@@ -50,6 +60,8 @@ def build_parser() -> argparse.ArgumentParser:
         description=__doc__,
         formatter_class=CustomFormatter,
     )
+
+    parser.add_argument("--version", action="version", version=f"{APP_NAME} {get_app_version()}")
 
     parser.add_argument(
         "packages",
