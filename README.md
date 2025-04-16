@@ -51,28 +51,35 @@ Binaries can now be put wherever and run:
 ```log
 $ uvx pip-build-standalone cowsay
 
-❯ uv python install --managed-python --install-dir /Users/levy/wrk/github/pip-build-standalone/py-standalone 3.13
-Installed Python 3.13.3 in 1.78s
+▶ uv python install --managed-python --install-dir /Users/levy/wrk/github/pip-build-standalone/py-standalone 3.13
+Installed Python 3.13.3 in 2.35s
  + cpython-3.13.3-macos-aarch64-none
 
-⏱ Call to run took 1.79s
+⏱ Call to run took 2.37s
 
-❯ uv pip install cowsay --python py-standalone/cpython-3.13.3-macos-aarch64-none --break-system-packages
+▶ uv venv --relocatable --python py-standalone/cpython-3.13.3-macos-aarch64-none py-standalone/bare-venv
+Using CPython 3.13.3 interpreter at: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/python3
+Creating virtual environment at: py-standalone/bare-venv
+Activate with: source py-standalone/bare-venv/bin/activate
+
+⏱ Call to run took 590ms
+Created relocatable venv config at: py-standalone/cpython-3.13.3-macos-aarch64-none/pyvenv.cfg
+
+▶ uv pip install cowsay --python py-standalone/cpython-3.13.3-macos-aarch64-none --break-system-packages
 Using Python 3.13.3 environment at: py-standalone/cpython-3.13.3-macos-aarch64-none
-Resolved 1 package in 0.85ms
+Resolved 1 package in 0.82ms
 Installed 1 package in 2ms
  + cowsay==6.1
 
-⏱ Call to run took 655ms
-Removed: py-standalone/cpython-3.13.3-macos-aarch64-none/lib/python3.13/encodings/__pycache__
+⏱ Call to run took 11.67ms
 Found macos dylib, will update its id to remove any absolute paths: py-standalone/cpython-3.13.3-macos-aarch64-none/lib/libpython3.13.dylib
 
-❯ install_name_tool -id @executable_path/../lib/libpython3.13.dylib py-standalone/cpython-3.13.3-macos-aarch64-none/lib/libpython3.13.dylib
+▶ install_name_tool -id @executable_path/../lib/libpython3.13.dylib py-standalone/cpython-3.13.3-macos-aarch64-none/lib/libpython3.13.dylib
 
-⏱ Call to run took 31.71ms
+⏱ Call to run took 34.11ms
 
 Inserting relocatable shebangs on scripts in:
-    ', '.join(glob_patterns)}
+    py-standalone/cpython-3.13.3-macos-aarch64-none/bin/*
 Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay
 Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/pydoc3.13
 Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/pip3.13
@@ -89,11 +96,12 @@ Replacing all absolute paths in:
     `/Users/levy/wrk/github/pip-build-standalone/py-standalone` -> `py-standalone`
 Replaced 27 occurrences in: py-standalone/cpython-3.13.3-macos-aarch64-none/lib/python3.13/_sysconfigdata__darwin_darwin.py
 Replaced 27 total occurrences in 1 files total
+Compiling all python files in: py-standalone...
 
 Sanity checking if any absolute paths remain...
 Great! No absolute paths found in the installed files.
 
-✔️ Success: Created standalone Python environment for packages ['cowsay'] at: py-standalone
+✔ Success: Created standalone Python environment for packages ['cowsay'] at: py-standalone
 
 $ ./py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay -t 'im moobile'
   __________
@@ -107,6 +115,7 @@ $ ./py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay -t 'im moobile'
                  ||----w |
                  ||     ||
 
+$ # Now let's confirm it runs in a different location!
 $ mv ./py-standalone /tmp
 
 $ /tmp/py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay -t 'udderly moobile'
@@ -128,8 +137,6 @@ $
 
 It uses a true (not venv) Python installation with the given pips installed, with zero
 absolute paths encoded in any of the Python scripts or libraries.
-So *in theory*, the resulting binary folder should be installable as at any location on
-a machine with compatible architecture.
 
 After setting this up we:
 
@@ -141,6 +148,8 @@ After setting this up we:
   relocatable.
 
 With those changes, it seems to work.
+So *in theory*, the resulting binary folder should be installable as at any location on
+a machine with compatible architecture.
 
 Warning: Experimental!
 No promises this works or is even a good idea.
