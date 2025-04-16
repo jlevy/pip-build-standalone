@@ -25,30 +25,10 @@ This tool is my quick attempt at fixing this.
 It creates a fully self-contained installation of Python plus any desired pips.
 The idea is this pre-built binary build for a given platform can now packaged for use
 without any external dependencies, not even Python or uv.
+And the the directory is relocatable.
 
-This should work for any platform and and the directory is relocatable.
+This should work for any platform.
 You just need to build on the same platform you want to run on.
-For now, we assume you are packaging a pip already on PyPI but of course the same
-approach could work for unpublished code.
-
-We have to do slightly different things on macOS, Linux, and Windows to make the
-installation relocatable, but it now seems to work on all three platforms.
-
-It uses a true (not venv) Python installation with the given pips installed, with zero
-absolute paths encoded in any of the Python scripts or libraries.
-So *in theory*, the resulting binary folder should be installable as at any location on
-a machine with compatible architecture.
-
-Note the good thing is this *does* work to encapsulate binary builds and libraries, as
-long as the binaries are included in the pip.
-It *doesn't* the problem of external dependencies that traditionally need to be
-installed outside the Python ecosystem (like ffmpeg).
-
-Warning: Experimental!
-No promises this works or is even a good idea.
-
-It is lightly tested on macOS, ubuntu, and Windows, but obviously there are lots of
-possibilities for subtle incompatibilities within a given platform.
 
 ## Usage
 
@@ -143,6 +123,44 @@ $ /tmp/py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay -t 'udderly mo
 
 $
 ```
+
+## How it Works
+
+It uses a true (not venv) Python installation with the given pips installed, with zero
+absolute paths encoded in any of the Python scripts or libraries.
+So *in theory*, the resulting binary folder should be installable as at any location on
+a machine with compatible architecture.
+
+After setting this up we:
+
+- Ensure all scripts in `bin/` have relocatable shebangs (normally they are absolute)
+
+- Clean up a few places source directories are baked into paths
+
+- Do slightly different things on macOS, Linux, and Windows to make the binary libs are
+  relocatable.
+
+With those changes, it seems to work.
+
+Warning: Experimental!
+No promises this works or is even a good idea.
+It is lightly tested on macOS, ubuntu, and Windows, but obviously there are
+possibilities for subtle incompatibilities within a given platform.
+
+## More Notes
+
+- The good thing is this *does* work to encapsulate binary builds and libraries, as long
+  as the binaries are included in the pip.
+  It *doesn't* the problem of external dependencies that traditionally need to be
+  installed outside the Python ecosystem (like ffmpeg).
+  (For this, [pixi](https://github.com/prefix-dev/pixi/) seems promising.)
+
+- This by default pre-compiles all files to create `__pycache__` .pyc files.
+  This means the build should start faster and could run on a read-only filesystem.
+  Use `--source-only` to have a source-only build.
+
+- For now, we assume you are packaging a pip already on PyPI but of course the same
+  approach could work for unpublished code.
 
 * * *
 
