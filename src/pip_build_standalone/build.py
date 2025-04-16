@@ -1,3 +1,4 @@
+import compileall
 import glob
 import os
 import shutil
@@ -12,7 +13,11 @@ from pip_build_standalone.shebangs import RELOCATABLE_PYTHON3_SHEBANG, replace_s
 
 
 def build_python_env(
-    package_list: list[str], target_dir: Path, python_version: str, force: bool = False
+    package_list: list[str],
+    target_dir: Path,
+    python_version: str,
+    source_only: bool = False,
+    force: bool = False,
 ):
     """
     Use uv to create a standalone Python environment with the given module installed.
@@ -83,8 +88,16 @@ def build_python_env(
     # It has absolute paths so better to just remove it.
     os.remove(temp_pyvenv_cfg)
 
-    # Don't (initially) include pycache files to keep the build smaller.
-    clean_pycache_dirs(target_absolute)
+    if source_only:
+        info("Only installing source .py files, ensuring no .pyc files are included")
+        clean_pycache_dirs(target_absolute)
+    else:
+        info(f"Compiling all python files in: {fmt_path(target_absolute)}")
+        # Important to include stripdir to avoid absolute paths.
+        compileall.compile_dir(target_absolute, quiet=1, stripdir=target_absolute)
+
+    # Note we could compile everything like this, but it would add absolute paths within the pyc files:
+    # compileall.compile_dir(target_absolute, quiet=1)
 
     # First handle binaries with possible absolute paths.
     if sys.platform == "darwin":

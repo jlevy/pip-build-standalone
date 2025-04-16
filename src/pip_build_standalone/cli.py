@@ -43,7 +43,13 @@ def main() -> int:
         fail("Could not find uv. Follow instructions to install at: https://docs.astral.sh/uv/")
 
     try:
-        build_python_env(args.packages, args.target, args.python_version, args.force)
+        build_python_env(
+            args.packages,
+            args.target,
+            args.python_version,
+            source_only=args.source_only,
+            force=args.force,
+        )
     except (FileNotFoundError, FileExistsError, subprocess.CalledProcessError) as e:
         fail(f"{e}")
 
@@ -68,6 +74,13 @@ def build_parser() -> argparse.ArgumentParser:
         type=str,
         nargs="+",
         help="Packages to install in the virtual environment, in the same format as to pip.",
+    )
+
+    parser.add_argument(
+        "--source-only",
+        action="store_true",
+        help="Only install source .py files, ensure no .pyc files are included. Without this flag, "
+        "all sources are also compiled.",
     )
 
     parser.add_argument(
