@@ -1,29 +1,48 @@
 # pip-build-standalone
 
 pip-build-standalone builds a standalone, relocatable Python installation with the given
-pips installed.
+pips installed. It's like a modern alternative to
+[PyInstaller](https://github.com/pyinstaller/pyinstaller) that leverages
+[uv](https://github.com/astral-sh/uv).
 
-Typically, Python installations are not relocatable or transferable between machines, in
-particular because scripts and libraries contain absolute file paths (such as your home
-folder at the time Python or the venv was installed).
+## Background
 
-[uv](https://github.com/jlevy/uv) already uses
-[standalone Python distributions](https://github.com/astral-sh/python-build-standalone)
-and offers [relocatable venvs](https://github.com/astral-sh/uv/pull/5515). But the
-actual Python installations created by uv can still have absolute paths that can leak
-into libs and scripts.
+Typically, Python installations are not relocatable or transferable between machines,
+even if they are on the same platform, because scripts and libraries contain absolute
+file paths (i.e., many scripts or libs include absolute paths that reference your home
+folder or system paths on your machine).
 
-This tool takes a bit of a brute-force approach to get a fully self-contained
-installation. We have to do slightly different things on macOS, Linux, and Windows to
-make the installation relocatable, but it now seems to work on all three platforms.
+Now uv has solved a lot of the challenge by providing
+[standalone Python distributions](https://github.com/astral-sh/python-build-standalone).
+It also supports [relocatable venvs](https://github.com/astral-sh/uv/pull/5515), so it's
+possible to move a venv.
+But the actual Python installations created by uv can still have absolute paths inside
+them in the dynamic libraries or scripts, as discussed in
+[this issue](https://github.com/astral-sh/uv/issues/2389).
+
+This tool is my quick attempt at fixing this.
+
+It creates a fully self-contained installation of Python plus any desired pips.
+The idea is this pre-built binary build for a given platform can now packaged for use
+without any external dependencies, not even Python or uv.
+
+This should work for any platform and and the directory is relocatable.
+You just need to build on the same platform you want to run on.
+For now, we assume you are packaging a pip already on PyPI but of course the same
+approach could work for unpublished code.
+
+We have to do slightly different things on macOS, Linux, and Windows to make the
+installation relocatable, but it now seems to work on all three platforms.
 
 It uses a true (not venv) Python installation with the given pips installed, with zero
 absolute paths encoded in any of the Python scripts or libraries.
 So *in theory*, the resulting binary folder should be installable as at any location on
 a machine with compatible architecture.
 
-The idea is this pre-built binary build for a given platform can now packaged for use
-without any external dependencies on Python or uv.
+Note the good thing is this *does* work to encapsulate binary builds and libraries, as
+long as the binaries are included in the pip.
+It *doesn't* the problem of external dependencies that traditionally need to be
+installed outside the Python ecosystem (like ffmpeg).
 
 Warning: Experimental!
 No promises this works or is even a good idea.
@@ -48,12 +67,6 @@ Now the `./py-standalone` directory will work without being tied to a specific m
 your home folder, or any other system-specific paths.
 
 Binaries can now be put wherever and run:
-
-```
-./py-standalone/cpython-3.13.2-macos-aarch64-none/bin/cowsay -t moo
-mv ./py-standalone /tmp
-/tmp/py-standalone/cpython-3.13.2-macos-aarch64-none/bin/cowsay -t moo
-```
 
 ```log
 $ uvx pip-build-standalone cowsay
@@ -113,6 +126,9 @@ $ ./py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay -t 'im moobile'
              (__)\       )\/\
                  ||----w |
                  ||     ||
+
+$ mv ./py-standalone /tmp
+
 $ /tmp/py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay -t 'udderly moobile'
   _______________
 | udderly moobile |
@@ -124,6 +140,7 @@ $ /tmp/py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay -t 'udderly mo
                   (__)\       )\/\
                       ||----w |
                       ||     ||
+
 $
 ```
 
