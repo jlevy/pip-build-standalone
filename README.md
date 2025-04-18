@@ -37,6 +37,11 @@ And the the directory is relocatable.
 This should work for any platform.
 You just need to build on the same platform you want to run on.
 
+Warning: Experimental!
+This is a new tool. I've used it on macOS and it's very lightly tested on Ubuntu and
+Windows, but obviously there are many possibilities for subtle incompatibilities within
+a given platform.
+
 ## Alternatives
 
 [PyInstaller](https://github.com/pyinstaller/pyinstaller) is the classic solution for
@@ -163,11 +168,6 @@ After setting this up we:
 With those changes, it seems to work.
 So *in theory*, the resulting binary folder should be installable as at any location on
 a machine with compatible architecture.
-
-Warning: Experimental!
-No promises this works or is even a good idea.
-It is lightly tested on macOS, ubuntu, and Windows, but obviously there are
-possibilities for subtle incompatibilities within a given platform.
 
 ## More Notes
 
