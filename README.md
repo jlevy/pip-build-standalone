@@ -1,9 +1,14 @@
 # pip-build-standalone
 
 pip-build-standalone builds a standalone, relocatable Python installation with the given
-pips installed. It's like a modern alternative to
-[PyInstaller](https://github.com/pyinstaller/pyinstaller) that leverages
-[uv](https://github.com/astral-sh/uv).
+packages installed. It's like a modern alternative to
+[PyInstaller](https://github.com/pyinstaller/pyinstaller) that leverages the newer uv
+ecosystem.
+
+It's a wrapper around [uv](https://github.com/astral-sh/uv) that creates a standalone
+Python installation, runs `uv pip install`, and then makes the required
+platform-specific changes so the install directory is self-contained (packagable and
+runnable from any directory on a machine of the same platform).
 
 ## Background
 
@@ -32,7 +37,7 @@ You just need to build on the same platform you want to run on.
 
 ## Usage
 
-This tool requires uv to run.
+Requires `uv` to run.
 Do a `uv self update` to make sure you have a recent uv (I'm currently testing on
 v0.6.14).
 
@@ -81,14 +86,7 @@ Found macos dylib, will update its id to remove any absolute paths: py-standalon
 Inserting relocatable shebangs on scripts in:
     py-standalone/cpython-3.13.3-macos-aarch64-none/bin/*
 Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay
-Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/pydoc3.13
-Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/pip3.13
-Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/pip3
-Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/idle3
-Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/python3-config
-Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/pip
-Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/idle3.13
-Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/python3.13-config
+...
 Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/pydoc3
 
 Replacing all absolute paths in:
