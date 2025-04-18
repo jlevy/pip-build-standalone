@@ -7,8 +7,8 @@ ecosystem.
 
 It's a wrapper around [uv](https://github.com/astral-sh/uv) that creates a standalone
 Python installation, runs `uv pip install`, and then makes the required
-platform-specific changes so the install directory is self-contained (packagable and
-runnable from any directory on a machine of the same platform).
+platform-specific changes so you have a fully self-contained install directory
+(packagable and runnable from any directory on a machine of the same platform).
 
 ## Background
 
@@ -17,23 +17,38 @@ even if they are on the same platform, because scripts and libraries contain abs
 file paths (i.e., many scripts or libs include absolute paths that reference your home
 folder or system paths on your machine).
 
-Now uv has solved a lot of the challenge by providing
+Now [Gregory Szorc](https://github.com/indygreg)
+[and Astral](https://astral.sh/blog/python-build-standalone) solved a lot of the
+challenge with
 [standalone Python distributions](https://github.com/astral-sh/python-build-standalone).
-It also supports [relocatable venvs](https://github.com/astral-sh/uv/pull/5515), so it's
+uv also supports [relocatable venvs](https://github.com/astral-sh/uv/pull/5515), so it's
 possible to move a venv.
-But the actual Python installations created by uv can still have absolute paths inside
-them in the dynamic libraries or scripts, as discussed in
+But at least currently, the actual Python installations created by uv can still have
+absolute paths inside them in the dynamic libraries or scripts, as discussed in
 [this issue](https://github.com/astral-sh/uv/issues/2389).
 
 This tool is my quick attempt at fixing this.
 
-It creates a fully self-contained installation of Python plus any desired pips.
+It creates a fully self-contained installation of Python plus any desired packages.
 The idea is this pre-built binary build for a given platform can now packaged for use
 without any external dependencies, not even Python or uv.
 And the the directory is relocatable.
 
 This should work for any platform.
 You just need to build on the same platform you want to run on.
+
+## Alternatives
+
+[PyInstaller](https://github.com/pyinstaller/pyinstaller) is the classic solution for
+this and has a lot of features beyond this little tool, but is far more complex and does
+not build on uv.
+
+[shiv](https://github.com/linkedin/shiv) and [pex](https://github.com/pex-tool/pex) are
+mature options that focus on zipping up your app, but not the Python installation.
+
+[PyApp](https://github.com/ofek/pyapp) is a more recent effort on top of uv that creates
+a Rust-built standalone binary that downloads/installs Python and dependencies at
+runtime.
 
 ## Usage
 
@@ -133,8 +148,8 @@ $
 
 ## How it Works
 
-It uses a true (not venv) Python installation with the given pips installed, with zero
-absolute paths encoded in any of the Python scripts or libraries.
+It uses a true (not venv) Python installation with the given packages installed, with
+zero absolute paths encoded in any of the Python scripts or libraries.
 
 After setting this up we:
 
