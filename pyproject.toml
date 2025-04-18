@@ -7,7 +7,7 @@ Repository = "https://github.com/jlevy/py-app-standalone"
 
 [project]
 name = "py-app-standalone"
-description = "Use uv to build a pip within a standalone Python installation"
+description = "Use uv to build a standalone, relocatable Python installation with the given packages installed"
 authors = [
     { name="Joshua Levy", email="joshua@cal.berkeley.edu" },
 ]

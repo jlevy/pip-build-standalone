@@ -1,6 +1,6 @@
 """
-py-app-standalone builds a standalone, relocatable Python installation with the
-given pips installed.
+py-app-standalone uses uv to build a standalone, relocatable Python installation with
+the given packages installed.
 
 More info: https://github.com/jlevy/py-app-standalone
 """
