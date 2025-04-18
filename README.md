@@ -1,7 +1,7 @@
 # py-app-standalone
 
-py-app-standalone builds a standalone, relocatable Python installation with the given
-packages installed. It's like a modern alternative to
+py-app-standalone builds a standalone, relocatable Python installation with a set of
+packages included. It's like a modern alternative to
 [PyInstaller](https://github.com/pyinstaller/pyinstaller) that leverages the newer uv
 ecosystem.
 
@@ -61,53 +61,53 @@ Requires `uv` to run.
 Do a `uv self update` to make sure you have a recent uv (I'm currently testing on
 v0.6.14).
 
-As an example, to create a full standalone Python 3.13 environment with the `cowsay`
-package:
+As an example, let's create a full standalone Python 3.13 environment with the `cowsay`
+package.
 
-```sh
-uvx py-app-standalone cowsay
-```
-
-Now the `./py-standalone` directory will work without being tied to a specific machine,
-your home folder, or any other system-specific paths.
-
-Binaries can now be put wherever and run:
+After this is done, the `./py-standalone` directory will work without being tied to a
+specific machine, your home folder, or any other system-specific paths.
+Binaries can now be put wherever and run.
 
 ```log
 $ uvx py-app-standalone cowsay
+Creating a new Python installation at: py-standalone
 
 ▶ uv python install --managed-python --install-dir /Users/levy/wrk/github/py-app-standalone/py-standalone 3.13
-Installed Python 3.13.3 in 2.35s
+Installed Python 3.13.3 in 2.78s
  + cpython-3.13.3-macos-aarch64-none
+⏱ Call to run took 2.80s
 
-⏱ Call to run took 2.37s
+Creating temporary venv (you can ignore this step. It is just a trick to get a uv pyvenv.cfg file)...
 
 ▶ uv venv --relocatable --python py-standalone/cpython-3.13.3-macos-aarch64-none py-standalone/bare-venv
 Using CPython 3.13.3 interpreter at: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/python3
 Creating virtual environment at: py-standalone/bare-venv
 Activate with: source py-standalone/bare-venv/bin/activate
+⏱ Call to run took 628ms
 
-⏱ Call to run took 590ms
-Created relocatable venv config at: py-standalone/cpython-3.13.3-macos-aarch64-none/pyvenv.cfg
+Temporary venv config: py-standalone/cpython-3.13.3-macos-aarch64-none/pyvenv.cfg
+Now installing packages directly into the original installation: py-standalone/cpython-3.13.3-macos-aarch64-none
 
 ▶ uv pip install cowsay --python py-standalone/cpython-3.13.3-macos-aarch64-none --break-system-packages
 Using Python 3.13.3 environment at: py-standalone/cpython-3.13.3-macos-aarch64-none
-Resolved 1 package in 0.82ms
-Installed 1 package in 2ms
+Resolved 1 package in 39ms
+Installed 1 package in 7ms
  + cowsay==6.1
+⏱ Call to run took 59.77ms
 
-⏱ Call to run took 11.67ms
+macOS: Updating dylib ids to be relocatable...
 Found macos dylib, will update its id to remove any absolute paths: py-standalone/cpython-3.13.3-macos-aarch64-none/lib/libpython3.13.dylib
 
 ▶ install_name_tool -id @executable_path/../lib/libpython3.13.dylib py-standalone/cpython-3.13.3-macos-aarch64-none/lib/libpython3.13.dylib
+⏱ Call to run took 38.14ms
 
-⏱ Call to run took 34.11ms
-
+Making sure all the scripts are relocatable...
 Inserting relocatable shebangs on scripts in:
     py-standalone/cpython-3.13.3-macos-aarch64-none/bin/*
 Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/cowsay
 ...
 Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/pydoc3
+Replacing remaining absolute paths...
 
 Replacing all absolute paths in:
     py-standalone/cpython-3.13.3-macos-aarch64-none/bin/* py-standalone/cpython-3.13.3-macos-aarch64-none/lib/**/*.py:
@@ -115,8 +115,7 @@ Replacing all absolute paths in:
 Replaced 27 occurrences in: py-standalone/cpython-3.13.3-macos-aarch64-none/lib/python3.13/_sysconfigdata__darwin_darwin.py
 Replaced 27 total occurrences in 1 files total
 Compiling all python files in: py-standalone...
-
-Sanity checking if any absolute paths remain...
+Sanity checking if any absolute paths remain (including in binary files)...
 Great! No absolute paths found in the installed files.
 
 ✔ Success: Created standalone Python environment for packages ['cowsay'] at: py-standalone
@@ -153,36 +152,40 @@ $
 
 ## How it Works
 
-It uses a true (not venv) Python installation with the given packages installed, with
+It creates true (not venv) Python installation with the given packages installed, with
 zero absolute paths encoded in any of the Python scripts or libraries.
 
-After setting this up we:
+It does this by:
 
-- Ensure all scripts in `bin/` have relocatable shebangs (normally they are absolute)
+- Installing a new standalone/relocatable Python installation with uv
 
-- Clean up a few places source directories are baked into paths
+- Ensuring all scripts in `bin/` have relocatable shebangs (normally they are absolute)
 
-- Do slightly different things on macOS, Linux, and Windows to make the binary libs are
-  relocatable.
+- Cleaning up a few other places source directories are baked into text files (like the
+  sysconfigdata .py file)
 
-With those changes, it seems to work.
-So *in theory*, the resulting binary folder should be installable as at any location on
-a machine with compatible architecture.
+- On macOS, fixing the hard-coded absolute path inside the Python .dylib file to be
+  relative using `install_name_tool` and its `@executable_path` var.
+  (On Linux and Windows something like this doesn't seem to be necessary.)
+
+It seems to work.
+So *in theory*, the resulting binary folder should be installable as at
+any location on a machine with compatible architecture.
 
 ## More Notes
 
+- I've only tested this with PyPI packages but it should work for any package name that
+  works with `uv pip` (so should work with private packages/indexes that work with uv).
+
 - The good thing is this *does* work to encapsulate binary builds and libraries, as long
-  as the binaries are included in the pip.
-  It *doesn't* the problem of external dependencies that traditionally need to be
-  installed outside the Python ecosystem (like ffmpeg).
+  as the binaries are included in the package.
+  It *doesn't* address the problem of external dependencies that traditionally need to
+  be installed outside the Python ecosystem (like ffmpeg).
   (For this, [pixi](https://github.com/prefix-dev/pixi/) seems promising.)
 
 - This by default pre-compiles all files to create `__pycache__` .pyc files.
   This means the build should start faster and could run on a read-only filesystem.
   Use `--source-only` to have a source-only build.
-
-- For now, we assume you are packaging a pip already on PyPI but of course the same
-  approach could work for unpublished code.
 
 * * *
 

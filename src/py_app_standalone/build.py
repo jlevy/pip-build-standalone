@@ -32,6 +32,7 @@ def build_python_env(
             f"target directory already exists (run with --force to run anyway): {target_dir}"
         )
 
+    info(f"Creating a new Python installation at: {fmt_path(target_absolute)}")
     run(
         [
             "uv",
@@ -58,6 +59,10 @@ def build_python_env(
     # So let's get a config file that marks a venv as relocatable.
     bare_venv_dir = target_dir / "bare-venv"
     temp_pyvenv_cfg = install_root / "pyvenv.cfg"
+    info(
+        "Creating temporary venv (you can ignore this step; it is just a trick "
+        "to get a uv pyvenv.cfg file)..."
+    )
     run(
         [
             "uv",
@@ -70,8 +75,11 @@ def build_python_env(
     )
     os.rename(bare_venv_dir / "pyvenv.cfg", temp_pyvenv_cfg)
     shutil.rmtree(bare_venv_dir)
-    info(f"Created relocatable venv config at: {fmt_path(temp_pyvenv_cfg)}")
+    info(f"Temporary venv config: {fmt_path(temp_pyvenv_cfg)}")
 
+    info(
+        f"Now installing packages directly into the original installation: {fmt_path(install_root)}"
+    )
     run(
         [
             "uv",
@@ -93,18 +101,21 @@ def build_python_env(
 
     # First handle binaries with possible absolute paths.
     if sys.platform == "darwin":
+        info("macOS: Updating dylib ids to be relocatable...")
         update_macos_dylib_ids(install_root)
 
     # Make all the scripts relocatable.
     # This may not actually be necessary anymore since we've done the pyvenv.cfg hack
     # above, but it's no harm to have it here too.
+    info("Making sure all the scripts are relocatable...")
     replace_shebangs([f"{install_root}/bin/*"], RELOCATABLE_PYTHON3_SHEBANG)
 
     # Then handle text files with absolute paths.
+    info("Replacing remaining absolute paths...")
     replace_absolute_paths(install_root, str(target_absolute), str(target_dir))
 
     if source_only:
-        info("Ensuring no .pyc files are included...")
+        info("Source only build: cleaning .pyc files...")
         clean_pycache_dirs(target_absolute)
     else:
         info(f"Compiling all python files in: {fmt_path(target_absolute)}...")
@@ -115,7 +126,8 @@ def build_python_env(
     sanity_check_absolute_paths(install_root, str(target_absolute))
 
     success(
-        f"Created standalone Python environment for packages {package_list} at: {fmt_path(target_dir)}"
+        f"Created standalone Python environment for packages {package_list} "
+        f"at: {fmt_path(target_dir)}"
     )
 
 
@@ -159,7 +171,7 @@ def replace_absolute_paths(python_root: Path, old_path_str: str, new_path_str: s
 
 def sanity_check_absolute_paths(python_root: Path, old_path_str: str):
     info()
-    info("Sanity checking if any absolute paths remain...")
+    info("Sanity checking if any absolute paths remain (including in binary files)...")
     all_files_glob = [f"{python_root}/**/*"]
     matches, _files_changed = search_replace_in_files(all_files_glob, old_path_str.encode(), None)
     if matches:
