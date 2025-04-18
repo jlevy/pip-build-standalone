@@ -5,7 +5,7 @@ from pathlib import Path
 from prettyfmt import fmt_path
 from strif import atomic_output_file
 
-from pip_build_standalone.cli_utils import info
+from py_app_standalone.cli_utils import info
 
 # Relocatable shebang for posix.
 # This is what uv does, which is based on pip's distlib. See:

@@ -106,7 +106,7 @@ wheels = [
 ]
 
 [[package]]
-name = "pip-build-standalone"
+name = "py-app-standalone"
 source = { editable = "." }
 dependencies = [
     { name = "funlog" },

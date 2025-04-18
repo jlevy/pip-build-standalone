@@ -1,8 +1,8 @@
 """
-pip-build-standalone builds a standalone, relocatable Python installation with the
+py-app-standalone builds a standalone, relocatable Python installation with the
 given pips installed.
 
-More info: https://github.com/jlevy/pip-build-standalone
+More info: https://github.com/jlevy/py-app-standalone
 """
 
 import argparse
@@ -15,10 +15,10 @@ from typing import Any
 from rich import get_console
 from rich_argparse.contrib import ParagraphRichHelpFormatter
 
-from pip_build_standalone.build import build_python_env
-from pip_build_standalone.cli_utils import fail
+from py_app_standalone.build import build_python_env
+from py_app_standalone.cli_utils import fail
 
-APP_NAME = "pip-build-standalone"
+APP_NAME = "py-app-standalone"
 
 DEFAULT_PYTHON_VERSION = "3.13"
 

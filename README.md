@@ -1,6 +1,6 @@
-# pip-build-standalone
+# py-app-standalone
 
-pip-build-standalone builds a standalone, relocatable Python installation with the given
+py-app-standalone builds a standalone, relocatable Python installation with the given
 packages installed. It's like a modern alternative to
 [PyInstaller](https://github.com/pyinstaller/pyinstaller) that leverages the newer uv
 ecosystem.
@@ -60,7 +60,7 @@ As an example, to create a full standalone Python 3.13 environment with the `cow
 package:
 
 ```sh
-uvx pip-build-standalone cowsay
+uvx py-app-standalone cowsay
 ```
 
 Now the `./py-standalone` directory will work without being tied to a specific machine,
@@ -69,9 +69,9 @@ your home folder, or any other system-specific paths.
 Binaries can now be put wherever and run:
 
 ```log
-$ uvx pip-build-standalone cowsay
+$ uvx py-app-standalone cowsay
 
-▶ uv python install --managed-python --install-dir /Users/levy/wrk/github/pip-build-standalone/py-standalone 3.13
+▶ uv python install --managed-python --install-dir /Users/levy/wrk/github/py-app-standalone/py-standalone 3.13
 Installed Python 3.13.3 in 2.35s
  + cpython-3.13.3-macos-aarch64-none
 
@@ -106,7 +106,7 @@ Replaced shebang in: py-standalone/cpython-3.13.3-macos-aarch64-none/bin/pydoc3
 
 Replacing all absolute paths in:
     py-standalone/cpython-3.13.3-macos-aarch64-none/bin/* py-standalone/cpython-3.13.3-macos-aarch64-none/lib/**/*.py:
-    `/Users/levy/wrk/github/pip-build-standalone/py-standalone` -> `py-standalone`
+    `/Users/levy/wrk/github/py-app-standalone/py-standalone` -> `py-standalone`
 Replaced 27 occurrences in: py-standalone/cpython-3.13.3-macos-aarch64-none/lib/python3.13/_sysconfigdata__darwin_darwin.py
 Replaced 27 total occurrences in 1 files total
 Compiling all python files in: py-standalone...

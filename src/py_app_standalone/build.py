@@ -7,9 +7,9 @@ from pathlib import Path
 
 from prettyfmt import fmt_path
 
-from pip_build_standalone.cli_utils import fail, info, run, success
-from pip_build_standalone.search_replace_files import search_replace_in_files
-from pip_build_standalone.shebangs import RELOCATABLE_PYTHON3_SHEBANG, replace_shebangs
+from py_app_standalone.cli_utils import fail, info, run, success
+from py_app_standalone.search_replace_files import search_replace_in_files
+from py_app_standalone.shebangs import RELOCATABLE_PYTHON3_SHEBANG, replace_shebangs
 
 
 def build_python_env(

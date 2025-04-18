@@ -6,7 +6,7 @@ import sys
 from os import chdir
 from pathlib import Path
 
-from pip_build_standalone import build_python_env
+from py_app_standalone import build_python_env
 
 
 def test_simple_env():

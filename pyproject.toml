@@ -1,12 +1,12 @@
 # ---- Project Info and Dependencies ----
 
 [project.urls]
-Repository = "https://github.com/jlevy/pip-build-standalone"
+Repository = "https://github.com/jlevy/py-app-standalone"
 # Homepage = "https://..."
 # Documentation = "https://..."
 
 [project]
-name = "pip-build-standalone"
+name = "py-app-standalone"
 description = "Use uv to build a pip within a standalone Python installation"
 authors = [
     { name="Joshua Levy", email="joshua@cal.berkeley.edu" },
@@ -59,7 +59,7 @@ dev = [
 
 [project.scripts]
 # Add script entry points here.
-pip-build-standalone = "pip_build_standalone.cli:main"
+py-app-standalone = "py_app_standalone.cli:main"
 
 
 # ---- Build system ----
@@ -84,7 +84,7 @@ bump = "true"
 
 [tool.hatch.build.targets.wheel]
 # The source location for the package.
-packages = ["src/pip_build_standalone"]
+packages = ["src/py_app_standalone"]
 
 
 # ---- Settings ----
