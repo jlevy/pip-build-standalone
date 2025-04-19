@@ -13,26 +13,31 @@ platform-specific changes so you have a fully self-contained install directory
 ## Background
 
 Typically, Python installations are not relocatable or transferable between machines,
-even if they are on the same platform, because scripts and libraries contain absolute
-file paths (i.e., many scripts or libs include absolute paths that reference your home
-folder or system paths on your machine).
+even if they are on the same platform, because often there are variable, dynamic library
+dependencies oand because scripts and libraries contain absolute file paths (i.e., many
+scripts or libs include absolute paths that reference your home folder or system paths
+on your machine).
 
 Now [Gregory Szorc](https://github.com/indygreg)
 [and Astral](https://astral.sh/blog/python-build-standalone) solved a lot of the
 challenge with
-[standalone Python distributions](https://github.com/astral-sh/python-build-standalone).
+[standalone Python distributions](https://github.com/astral-sh/python-build-standalone),
+which handles static linking and various other issues—see the
+[technical notes](https://gregoryszorc.com/docs/python-build-standalone/main/technotes.html).
 uv also supports [relocatable venvs](https://github.com/astral-sh/uv/pull/5515), so it's
 possible to move a venv.
 But at least currently, the actual Python installations created by uv can still have
 absolute paths inside them in the dynamic libraries or scripts, as discussed in
 [this issue](https://github.com/astral-sh/uv/issues/2389).
 
-This tool is my quick attempt at fixing this.
+This tool is my quick attempt at fixing this, so you basically are using uv but have a
+fully self-contained installation, with your chosen version of Python and any packages
+you wish.
 
-It creates a fully self-contained installation of Python plus any desired packages.
-The idea is this pre-built binary build for a given platform can now packaged for use
-without any external dependencies, not even Python or uv.
+The idea is this pre-built binary package can then be used on any machine of a given
+platform withou any external dependencies, not even Python or uv.
 And the the directory is relocatable.
+So you could for example put it inside a desktop app.
 
 This should work for any platform.
 You just need to build on the same platform you want to run on.
@@ -61,12 +66,19 @@ Requires `uv` to run.
 Do a `uv self update` to make sure you have a recent uv (I'm currently testing on
 v0.6.14).
 
+Then:
+
+```shell
+uvx py-app-standalone --help
+uvx py-app-standalone cowsay  # whatever packages you wish
+```
+
 As an example, let's create a full standalone Python 3.13 environment with the `cowsay`
 package.
 
 After this is done, the `./py-standalone` directory will work without being tied to a
 specific machine, your home folder, or any other system-specific paths.
-Binaries can now be put wherever and run.
+Binaries can now be put wherever and run:
 
 ```log
 $ uvx py-app-standalone cowsay
@@ -186,6 +198,20 @@ any location on a machine with compatible architecture.
 - This by default pre-compiles all files to create `__pycache__` .pyc files.
   This means the build should start faster and could run on a read-only filesystem.
   Use `--source-only` to have a source-only build.
+
+## FAQ
+
+- **Hasn't this been solved before?** Yes, by PyInstaller and other tools (see above).
+  But not as far as I know with the modern uv ecosystem, which has a lot of advantages
+  over legacy Python tooling.
+  The fact that this is so much simpler than PyInstaller arguably shows that a lot of
+  heavy lifting is being done by uv tooling.
+
+- **Why not just use Docker?** If you can, you probably should!
+  But there are lots of situations, such as in building apps for end-users on macOS and
+  Windows, where Docker is too heavyweight a solution.
+  And there are situations where you still want a single, portable package or
+  distribution that doesn't require runtime installs.
 
 * * *
 
